@@ -41,13 +41,14 @@ careful! The docs below are incomplete and partially wrong!
 
 ## Installation
 
-First, install the Rapture binary.
+First, install the latest Rapture binary for your platform [from Github](https://github.com/daveadams/go-rapture/releases)
+and copy it to a directory in your PATH. Or if you prefer you can build it yourself:
 
-(TODO: binary instructions here, for building from source or download.)
+    $ go get -u github.com/daveadams/go-rapture/cmd/rapture
 
 Then configure your shell to load Rapture at start:
 
-    $ echo 'eval "$( rapture setup )"' >> ~/.bash_profile
+    $ echo 'eval "$( command rapture setup )"' >> ~/.bash_profile
 
 *NOTE:* You may need to add this line to `~/.bashrc` instead on some systems.
 
@@ -57,6 +58,13 @@ Finally, open a new terminal window to verify that Rapture is automatically load
 
     $ rapture check
     OK: Rapture is set up correctly
+
+
+## Upgrading from Bash Rapture
+
+Simply remove the old `source ~/.rapture/rapture.sh` from your shell startup
+script, and replace it with the new command. The old Rapture configuration files
+will continue to work in the same way.
 
 
 ## Configuration
