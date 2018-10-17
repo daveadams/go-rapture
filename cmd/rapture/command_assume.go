@@ -34,18 +34,28 @@ func CommandAssume(cmd string, args []string) int {
 
 	sess, _, err := session.CurrentSession()
 	if err != nil {
-		shgen.ErrEchof("ERROR: Could not load current Rapture session: %s", err)
-		return 1
+		if err == session.ErrBaseCredsExpired {
+			// use fmt to print this immediately to stderr
+			fmt.Fprintf(os.Stderr, "Base credentials have expired! Re-initializing:\n")
+
+			// hacky?
+			initResult := CommandInit("init", []string{})
+			if initResult != 0 {
+				return initResult
+			}
+
+			// retry loading session
+			sess, _, err = session.CurrentSession()
+		}
+
+		if err != nil {
+			shgen.ErrEchof("ERROR: Could not load current Rapture session: %s", err)
+			return 1
+		}
 	}
 
 	cc, err := sess.CredentialsForRole(arn)
 	if err != nil {
-		if err == session.ErrBaseCredsExpired {
-			shgen.ErrEcho("INFO: Base credentials have expired, renewing...")
-			// TODO: refactor this madness and eliminate the bashism
-			shgen.Pass(fmt.Sprintf("rapture init && rapture assume %s\n", roleName))
-			return 0
-		}
 		shgen.ErrEchof("ERROR: Could not assume role '%s': %s", args[0], err)
 		return 1
 	}
