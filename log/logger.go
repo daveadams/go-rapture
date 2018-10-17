@@ -38,7 +38,7 @@ func Trace(s string) {
 }
 
 func Tracef(s string, args ...interface{}) {
-	if debug {
+	if trace {
 		fmt.Fprintf(os.Stderr, "[TRACE] %s\n", fmt.Sprintf(s, args...))
 	}
 }
