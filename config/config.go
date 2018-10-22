@@ -11,7 +11,6 @@ import (
 
 type RaptureConfig struct {
 	Region          string `json:"region,omitempty"`
-	Quiet           bool   `json:"quiet,omitempty"`
 	Identifier      string `json:"identifier,omitempty"`
 	SessionDuration int64  `json:"session_duration,omitempty"`
 	DefaultVault    string `json:"default_vault,omitempty"`
@@ -28,7 +27,6 @@ func DefaultConfig() *RaptureConfig {
 	log.Trace("config: DefaultConfig()")
 	return &RaptureConfig{
 		Region:          "us-east-1",
-		Quiet:           false,
 		Identifier:      os.Getenv("USER"),
 		SessionDuration: 3600,
 		DefaultVault:    "default",
@@ -45,14 +43,14 @@ func LoadConfig() (*RaptureConfig, error) {
 	config := DefaultConfig()
 	fn := ConfigFilename()
 	if _, err := os.Stat(fn); os.IsNotExist(err) {
-		// no roles file, return defaults
+		// no config file, return defaults
 		return config, nil
 	} else {
 		bytes, err := ioutil.ReadFile(fn)
 		if err != nil {
 			return config, err
 		}
-		err = json.Unmarshal(bytes, &config)
+		err = json.Unmarshal(bytes, config)
 		if err != nil {
 			return config, err
 		}
@@ -70,4 +68,33 @@ func GetConfig() *RaptureConfig {
 	} else {
 		return c
 	}
+}
+
+// return the raw config without any defaults (or an empty config if it's missing)
+// return values are config, exists?, error
+func RawConfig() (*RaptureConfig, bool, error) {
+	log.Trace("config: RawConfig()")
+
+	config := &RaptureConfig{}
+	empty := &RaptureConfig{}
+
+	fn := ConfigFilename()
+	if _, err := os.Stat(fn); os.IsNotExist(err) {
+		// no config file, return an empty config
+		log.Debug("Found no config file")
+		return empty, false, nil
+	} else {
+		bytes, err := ioutil.ReadFile(fn)
+		if err != nil {
+			log.Debugf("Could not read config file: %s", err)
+			return empty, true, err
+		}
+		err = json.Unmarshal(bytes, config)
+		if err != nil {
+			log.Debugf("Could not parse config: %s", err)
+			return empty, true, err
+		}
+	}
+
+	return config, true, nil
 }

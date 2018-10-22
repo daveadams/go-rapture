@@ -37,5 +37,10 @@ func (g *TerminalGenerator) Pass(s string) {
 	fmt.Print(s)
 }
 
+func (g *TerminalGenerator) Passf(format string, args ...interface{}) {
+	fmt.Printf("%s\n", fmt.Sprintf(format, args...))
+}
+
 // nothing to do here
-func (g *TerminalGenerator) Print() {}
+func (g *TerminalGenerator) Print()            {}
+func (g *TerminalGenerator) Run(argv []string) {}

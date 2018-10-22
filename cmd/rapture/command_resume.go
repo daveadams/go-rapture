@@ -8,10 +8,7 @@ import (
 func CommandResume(cmd string, args []string) int {
 	log.Tracef("[main] CommandResume(cmd='%s', args=%s)", cmd, args)
 
-	if !shgen.Wrapped() {
-		shgen.ErrEcho("ERROR: You must run this command using the shell wrapper")
-		return 1
-	}
+	RequireWrap()
 
 	sess, _, err := session.CurrentSession()
 	if err != nil {

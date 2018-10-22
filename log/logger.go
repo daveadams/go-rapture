@@ -19,6 +19,30 @@ func init() {
 	}
 }
 
+func DebugEnabled() bool {
+	return debug
+}
+
+func TraceEnabled() bool {
+	return trace
+}
+
+func TraceEnvironment() {
+	if trace {
+		for _, v := range os.Environ() {
+			Trace(v)
+		}
+	}
+}
+
+func DebugEnvironment() {
+	if debug {
+		for _, v := range os.Environ() {
+			Debug(v)
+		}
+	}
+}
+
 func Debug(s string) {
 	if debug {
 		fmt.Fprintf(os.Stderr, "[DEBUG] %s\n", s)

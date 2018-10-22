@@ -11,12 +11,9 @@ import (
 )
 
 func CommandInit(cmd string, args []string) int {
-	log.Tracef("[main] CommandInit(cmd='%s', args=%s)", cmd, args)
+	log.Tracef("main: CommandInit(cmd='%s', args=%s)", cmd, args)
 
-	if !shgen.Wrapped() {
-		shgen.ErrEcho("ERROR: You must run this command using the shell wrapper")
-		return 1
-	}
+	RequireWrap()
 
 	if !vaulted.Installed() {
 		shgen.ErrEcho("ERROR: can't find 'vaulted' in your path")

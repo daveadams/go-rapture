@@ -8,16 +8,12 @@ import (
 	"github.com/daveadams/go-rapture/shellgen"
 )
 
-func CommandSetup(cmd string, args []string) int {
-	log.Tracef("[main] CommandEnv(cmd='%s', args=%s)", cmd, args)
+func CommandShellInit(cmd string, args []string) int {
+	log.Tracef("[main] CommandShellInit(cmd='%s', args=%s)", cmd, args)
 
 	shbin := os.Getenv("SHELL")
 
-	// this command won't be run while wrapped, but we still want to generate safe shell code
 	shgen = shellgen.NewGeneratorForShell(shbin)
-
-	binpath, _ := os.Executable()
-	shgen.Set("_rapture_bin", binpath)
 
 	switch filepath.Base(shbin) {
 	case "bash":
@@ -37,21 +33,33 @@ func CommandSetup(cmd string, args []string) int {
 func setupBash() {
 	log.Trace("[main] setupBash()")
 
-	shgen.Pass(`rapture() {
+	binpath, _ := os.Executable()
+
+	shgen.Passf(`rapture() {
     eval "$(
         export _rapture_session_id _rapture_session_key _rapture_session_salt _rapture_wrap=true
-        "${_rapture_bin}" "$@"
+        "%s" "$@"
     )"
 }
-`)
+`, binpath)
 }
 
 func setupZsh() {
 	log.Trace("[main] setupZsh()")
-	shgen.Echo("TODO")
+	setupBash()
 }
 
 func setupFish() {
 	log.Trace("[main] setupFish()")
-	shgen.Echo("TODO")
+
+	binpath, _ := os.Executable()
+	shgen.Passf(`function rapture;
+    set -l IFS;
+    set -lx _rapture_session_id $_rapture_session_id;
+    set -lx _rapture_session_key $_rapture_session_key;
+    set -lx _rapture_session_salt $_rapture_session_salt;
+    set -lx _rapture_wrap true;
+    %s $argv |source;
+end
+`, binpath)
 }

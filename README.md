@@ -46,13 +46,23 @@ and copy it to a directory in your PATH. Or if you prefer you can build it yours
 
     $ go get -u github.com/daveadams/go-rapture/cmd/rapture
 
-Then configure your shell to load Rapture at start:
+To configure your shell to load Rapture at startup, follow the instructions
+below for your specific shell.
 
-    $ echo 'eval "$( command rapture setup )"' >> ~/.bash_profile
+### Bash/Zsh Installation
 
-*NOTE:* You may need to add this line to `~/.bashrc` instead on some systems.
+In your shell startup file (usually `~/.bash_profile` or `~/.bashrc`; for Zsh
+usually `~/.zshrc`), add the following line:
 
-(TODO: Specify setup for other shells.)
+    eval "$( command rapture shell-init )"
+
+### Fish Installation
+
+In your Fish startup file (`~/.config/fish/config.fish`), add the following line:
+
+    eval ( command rapture shell-init )
+
+### Verifying the setup
 
 Finally, open a new terminal window to verify that Rapture is automatically loaded:
 
@@ -69,12 +79,20 @@ will continue to work in the same way.
 
 ## Configuration
 
-No configuration is required to start using Rapture, but Rapture will store configuration in `config.json`, `aliases.json`, and `accounts.json` in the `~/.rapture` directory.
+No configuration is required to start using Rapture, but Rapture will store
+configuration in `config.json`, `aliases.json`, and `accounts.json` in the
+`~/.rapture` directory.
 
 
 ## Environment Variables
 
-Rapture sets the `RAPTURE_ROLE` environment variable with the role ARN or alias of the currently-assumed role.
+Rapture exports the `RAPTURE_ROLE` environment variable with the user-supplied
+identifier of the currently-assumed role, either the role alias, or the ARN.
+
+Rapture also exports the `RAPTURE_ASSUMED_ROLE_ARN` environment variable to
+the full ARN of the currently assumed role.
+
+Both of these environment variables are unset when base credentials are loaded.
 
 
 ## Caveats

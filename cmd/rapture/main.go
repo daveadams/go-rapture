@@ -7,17 +7,22 @@ import (
 type CommandMap map[string]func(string, []string) int
 
 var cmdMap CommandMap = CommandMap{
-	"account": CommandAccount,
-	"acct":    CommandAccount,
-	"alias":   CommandRole,
-	"assume":  CommandAssume,
-	"check":   CommandCheck,
-	"init":    CommandInit,
-	"resume":  CommandResume,
-	"role":    CommandRole,
-	"setup":   CommandSetup,
-	"version": CommandVersion,
-	"whoami":  CommandWhoami,
+	"account":    CommandAccount,
+	"acct":       CommandAccount,
+	"alias":      CommandRole,
+	"assume":     CommandAssume,
+	"check":      CommandCheck,
+	"clean":      CommandClean,
+	"config":     CommandConfig,
+	"daemon":     CommandDaemon,
+	"init":       CommandInit,
+	"reset":      CommandReset,
+	"resume":     CommandResume,
+	"role":       CommandRole,
+	"shell-init": CommandShellInit,
+	"version":    CommandVersion,
+	"whoami":     CommandWhoami,
+	"wrap":       CommandWrap,
 }
 
 func main() {

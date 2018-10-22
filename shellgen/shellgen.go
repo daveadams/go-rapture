@@ -17,6 +17,8 @@ type Generator interface {
 	ErrEcho(string)
 	ErrEchof(string, ...interface{})
 	Pass(string)
+	Passf(string, ...interface{})
+	Run([]string)
 	Print()
 }
 

@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+
+	"github.com/daveadams/go-rapture/log"
 )
 
 func LoadVault(name string) (map[string]string, error) {
+	log.Tracef("vaulted: LoadVault(name='%s')", name)
+
 	rv := map[string]string{}
 
 	out, err := exec.Command("vaulted", "env", "--format", "json", name).Output()
