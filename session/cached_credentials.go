@@ -84,7 +84,7 @@ func (cc *CachedCredentials) Filename() string {
 	bytes := make([]byte, len(hash))
 	copy(bytes, hash[:])
 
-	return filepath.Join(cc.sess.CacheDir(), base64.StdEncoding.EncodeToString(bytes))
+	return filepath.Join(cc.sess.CacheDir(), base64.RawURLEncoding.EncodeToString(bytes))
 }
 
 // encrypt creds in memory

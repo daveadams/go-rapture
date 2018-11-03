@@ -67,7 +67,7 @@ func newSessionKey() ([]byte, error) {
 func parseEncodedKey(s string) ([]byte, error) {
 	log.Tracef("session: parseEncodedKey(s='%s')", s)
 
-	if bytes, err := base64.StdEncoding.DecodeString(s); err != nil {
+	if bytes, err := base64.RawURLEncoding.DecodeString(s); err != nil {
 		return bytes, err
 	} else {
 		return bytes, nil
@@ -87,12 +87,12 @@ func newSessionSalt() (string, error) {
 	if _, err := rand.Read(bytes); err != nil {
 		return "", err
 	}
-	return base64.StdEncoding.EncodeToString(bytes), nil
+	return base64.RawURLEncoding.EncodeToString(bytes), nil
 }
 
 func isValidSessionSalt(s string) bool {
 	log.Tracef("session: isValidSessionSalt(s='%s')", s)
-	return len(s) == base64.StdEncoding.EncodedLen(SaltSize)
+	return len(s) == base64.RawURLEncoding.EncodedLen(SaltSize)
 }
 
 // loads the current session from env vars if possible, or creates a new one if not
@@ -195,7 +195,7 @@ func (s *RaptureSession) SaveBaseCredentials() error {
 
 func (s *RaptureSession) EncodedKey() string {
 	log.Trace("session: RaptureSession.EncodedKey()")
-	return base64.StdEncoding.EncodeToString(s.key)
+	return base64.RawURLEncoding.EncodeToString(s.key)
 }
 
 func (s *RaptureSession) Key() [KeySize]byte {
@@ -241,7 +241,7 @@ func (s *RaptureSession) DecryptCredentials(enc string) (*Credentials, error) {
 
 	key := s.Key()
 
-	ciphertext, err := base64.StdEncoding.DecodeString(enc)
+	ciphertext, err := base64.RawURLEncoding.DecodeString(enc)
 	if err != nil {
 		return nil, err
 	}
@@ -285,5 +285,5 @@ func (s *RaptureSession) EncryptCredentials(c *Credentials) (string, error) {
 
 	ciphertext := secretbox.Seal(prefix, message, &nonce, &key)
 
-	return base64.StdEncoding.EncodeToString(ciphertext), nil
+	return base64.RawURLEncoding.EncodeToString(ciphertext), nil
 }
