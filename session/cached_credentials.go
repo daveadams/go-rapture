@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/daveadams/go-rapture/log"
 )
@@ -22,6 +23,7 @@ const (
 type CachedCredentials struct {
 	RoleArn        string          `json:"role_arn"`
 	EncryptedCreds string          `json:"credentials"`
+	ExpiresAt      time.Time       `json:"expires_at,omitempty"`
 	Creds          *Credentials    `json:"-"`
 	sess           *RaptureSession `json:"-"`
 }
@@ -125,6 +127,10 @@ func (cc *CachedCredentials) save() error {
 
 	if err := cc.encrypt(); err != nil {
 		return err
+	}
+
+	if cc.Creds != nil {
+		cc.ExpiresAt = cc.Creds.ExpiresAt
 	}
 
 	fn := cc.Filename()

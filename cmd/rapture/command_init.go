@@ -83,12 +83,12 @@ func CommandInit(cmd string, args []string) int {
 	if isnew {
 		log.Debug("Started a new Rapture session")
 	} else {
-		log.Debug("Using an existing session, that seems wrong...")
+		log.Debug("Using an existing session, that is probably wrong for init.")
 	}
 
 	err = sess.Save(shgen)
 	if err != nil {
-		shgen.ErrEchof("ERROR: Failed to cache base credentials: %s", err)
+		shgen.ErrEchof("ERROR: Failed to save session: %s", err)
 	}
 
 	return PrintWhoami()

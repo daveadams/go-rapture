@@ -25,8 +25,9 @@ const (
 	KeyEnvVar  = "_rapture_session_key"
 	SaltEnvVar = "_rapture_session_salt"
 
-	AssumedRoleArnEnvVar   = "RAPTURE_ASSUMED_ROLE_ARN"
-	AssumedRoleAliasEnvVar = "RAPTURE_ROLE"
+	AssumedRoleArnEnvVar        = "RAPTURE_ASSUMED_ROLE_ARN"
+	AssumedRoleAliasEnvVar      = "RAPTURE_ROLE"
+	AssumedRoleExpirationEnvVar = "RAPTURE_ROLE_EXPIRATION"
 )
 
 type RaptureSession struct {

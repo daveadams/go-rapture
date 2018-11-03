@@ -61,9 +61,9 @@ func (c *Credentials) ExportToEnvironment(shgen shellgen.Generator) {
 	}
 
 	if c.ExpiresAt.IsZero() {
-		shgen.Unset("VAULTED_ENV_EXPIRATION")
+		shgen.Unset(AssumedRoleExpirationEnvVar)
 	} else {
-		shgen.Export("VAULTED_ENV_EXPIRATION", c.ExpiresAt.UTC().Format(time.RFC3339))
+		shgen.Export(AssumedRoleExpirationEnvVar, c.ExpiresAt.UTC().Format(time.RFC3339))
 	}
 }
 

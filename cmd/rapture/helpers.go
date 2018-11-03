@@ -36,6 +36,10 @@ func CurrentSession() (*session.RaptureSession, error) {
 		}
 	}
 
+	if err := sess.Save(shgen); err != nil {
+		return nil, err
+	}
+
 	return sess, nil
 }
 
@@ -65,8 +69,8 @@ func LoadCredentials(id string) (*session.CachedCredentials, error) {
 
 	cc.Creds.ExportToEnvironment(shgen)
 
-	shgen.Export("RAPTURE_ROLE", roleName)
-	shgen.Export("RAPTURE_ASSUMED_ROLE_ARN", cc.RoleArn)
+	shgen.Export(session.AssumedRoleAliasEnvVar, roleName)
+	shgen.Export(session.AssumedRoleArnEnvVar, cc.RoleArn)
 
 	return cc, nil
 }
@@ -82,6 +86,7 @@ func StashEnvironment() map[string]string {
 		"AWS_SESSION_TOKEN",
 		"RAPTURE_ROLE",
 		"RAPTURE_ASSUMED_ROLE_ARN",
+		"RAPTURE_ROLE_EXPIRATION",
 	}
 
 	rv := make(map[string]string, len(vars))
