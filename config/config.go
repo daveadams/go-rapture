@@ -14,6 +14,7 @@ type RaptureConfig struct {
 	Identifier      string `json:"identifier,omitempty"`
 	SessionDuration int64  `json:"session_duration,omitempty"`
 	DefaultVault    string `json:"default_vault,omitempty"`
+	Quiet           bool   `json:"quiet,omitempty"`
 }
 
 var config *RaptureConfig
@@ -30,6 +31,7 @@ func DefaultConfig() *RaptureConfig {
 		Identifier:      os.Getenv("USER"),
 		SessionDuration: 3600,
 		DefaultVault:    "default",
+		Quiet:           false,
 	}
 }
 

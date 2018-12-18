@@ -27,7 +27,9 @@ func PrintWhoami() int {
 		return 1
 	}
 
-	shgen.Echo(arn.String())
+	if !quiet {
+		shgen.Echo(arn.String())
+	}
 
 	return 0
 }
