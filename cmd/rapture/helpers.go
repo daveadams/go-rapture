@@ -14,6 +14,20 @@ import (
 func CurrentSession() (*session.RaptureSession, error) {
 	log.Trace("main: CurrentSession()")
 
+	if !session.CurrentSessionExists() {
+		if ec := session.ReadCredentialsFromEnvironment(); ec.Valid() {
+			// if AWS credentials exist, use those as the base creds
+			fmt.Fprintf(os.Stderr, "No current rapture session exists. Using existing credentials from environment.\n")
+		} else {
+			// otherwise, attempt to init using defaults
+			fmt.Fprintf(os.Stderr, "No current rapture session exists! Initializing:\n")
+			initResult := CommandInit("init", []string{})
+			if initResult != 0 {
+				return nil, fmt.Errorf("Failed to initialize base credentials")
+			}
+		}
+	}
+
 	sess, _, err := session.CurrentSession()
 	if err != nil {
 		if err == session.ErrBaseCredsExpired {

@@ -96,6 +96,35 @@ func isValidSessionSalt(s string) bool {
 	return len(s) == base64.RawURLEncoding.EncodedLen(SaltSize)
 }
 
+// CurrentSessionExists reports whether or not a rapture session exists in the environment
+func CurrentSessionExists() bool {
+	log.Trace("session: CurrentSessionExists()")
+
+	if currentSession != nil {
+		return true
+	}
+
+	if id, ok := os.LookupEnv(IDEnvVar); !ok || id == "" {
+		return false
+	} else if !isValidSessionID(id) {
+		return false
+	}
+
+	if encodedKey, ok := os.LookupEnv(KeyEnvVar); !ok || encodedKey == "" {
+		return false
+	} else if val, err := parseEncodedKey(encodedKey); err != nil || !isValidSessionKey(val) {
+		return false
+	}
+
+	if salt, ok := os.LookupEnv(SaltEnvVar); !ok || salt == "" {
+		return false
+	} else if !isValidSessionSalt(salt) {
+		return false
+	}
+
+	return true
+}
+
 // loads the current session from env vars if possible, or creates a new one if not
 func CurrentSession() (*RaptureSession, bool, error) {
 	log.Trace("session: CurrentSession()")
