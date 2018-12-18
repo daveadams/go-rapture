@@ -34,6 +34,9 @@ Commands:
   config
     Prints the current configuration.
 
+  reset
+    Unsets all environment variables used by Rapture.
+
   version
     Prints the current version.
 `)
