@@ -15,56 +15,15 @@ func CommandInit(cmd string, args []string) int {
 
 	RequireWrap()
 
-	if !vaulted.Installed() {
-		shgen.ErrEcho("ERROR: can't find 'vaulted' in your path")
-		return 1
+	var vars map[string]string
+	var err error
+	switch config.GetConfig().InitMethod {
+	case "vaulted":
+		vars, err = initWithVaulted(args)
+	default:
+		shgen.ErrEchof("ERROR: init_method '%s' is unknown. Cannot continue.")
 	}
 
-	vault := config.GetConfig().DefaultVault
-
-	// if VAULTED_ENV is set, use that as the default
-	if val, ok := os.LookupEnv("VAULTED_ENV"); ok {
-		vault = val
-	}
-
-	names, err := vaulted.New().ListVaults()
-	if err != nil {
-		shgen.ErrEchof("ERROR: Could not load list of vaults: %s", err)
-		return 1
-	}
-
-	// if a vault name is specified, override the default
-	if len(args) > 0 {
-		vault = args[0]
-	}
-
-	exists := false
-	for _, vn := range names {
-		if vn == vault {
-			exists = true
-			break
-		}
-	}
-
-	if !exists {
-		if len(args) == 0 {
-			if len(names) > 0 {
-				fn := DisplayFilename(config.ConfigFilename())
-				shgen.ErrEchof("ERROR: No default vault is defined. Consider setting 'default_vault' in %s.", fn)
-				return 1
-			} else {
-				shgen.ErrEcho("ERROR: No Vaulted vaults are available. Please use Vaulted to store your base credentials.")
-				return 1
-			}
-		} else {
-			shgen.ErrEchof("ERROR: No such vault '%s'", vault)
-			return 1
-		}
-	}
-
-	// use fmt to print this immediately to stderr
-	fmt.Fprintf(os.Stderr, "Initializing vaulted env '%s':\n", vault)
-	vars, err := vaulted.LoadVault(vault)
 	if err != nil {
 		shgen.ErrEchof("ERROR: %s", err)
 		return 1
@@ -87,15 +46,10 @@ func CommandInit(cmd string, args []string) int {
 		os.Setenv(varname, value)
 	}
 
-	sess, isnew, err := session.CurrentSession()
+	sess, _, err := session.CurrentSession()
 	if err != nil {
 		shgen.ErrEchof("ERROR: %s", err)
 		return 1
-	}
-	if isnew {
-		log.Debug("Started a new Rapture session")
-	} else {
-		log.Debug("Using an existing session, that is probably wrong for init.")
 	}
 
 	err = sess.Save(shgen)
@@ -104,4 +58,51 @@ func CommandInit(cmd string, args []string) int {
 	}
 
 	return PrintWhoami()
+}
+
+func initWithVaulted(args []string) (map[string]string, error) {
+	if !vaulted.Installed() {
+		return nil, fmt.Errorf("can't find 'vaulted' in your path")
+	}
+
+	vault := config.GetConfig().DefaultVault
+
+	// if VAULTED_ENV is set, use that as the default
+	if val, ok := os.LookupEnv("VAULTED_ENV"); ok {
+		vault = val
+	}
+
+	names, err := vaulted.New().ListVaults()
+	if err != nil {
+		return nil, fmt.Errorf("Could not load list of vaults: %s", err)
+	}
+
+	// if a vault name is specified, override the default
+	if len(args) > 0 {
+		vault = args[0]
+	}
+
+	exists := false
+	for _, vn := range names {
+		if vn == vault {
+			exists = true
+			break
+		}
+	}
+
+	if !exists {
+		if len(args) == 0 {
+			if len(names) > 0 {
+				fn := DisplayFilename(config.ConfigFilename())
+				return nil, fmt.Errorf("No default vault is defined. Consider setting 'default_vault' in %s.", fn)
+			} else {
+				return nil, fmt.Errorf("No Vaulted vaults are available. Please use Vaulted to store your base credentials.")
+			}
+		} else {
+			return nil, fmt.Errorf("No such vault '%s'", vault)
+		}
+	}
+
+	infof("Initializing vaulted env '%s':\n", vault)
+	return vaulted.LoadVault(vault)
 }

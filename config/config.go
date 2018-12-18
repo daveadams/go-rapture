@@ -13,6 +13,7 @@ type RaptureConfig struct {
 	Region          string `json:"region,omitempty"`
 	Identifier      string `json:"identifier,omitempty"`
 	SessionDuration int64  `json:"session_duration,omitempty"`
+	InitMethod      string `json:"init_method,omitempty"`
 	DefaultVault    string `json:"default_vault,omitempty"`
 	Quiet           bool   `json:"quiet,omitempty"`
 }
@@ -30,6 +31,7 @@ func DefaultConfig() *RaptureConfig {
 		Region:          "us-east-1",
 		Identifier:      os.Getenv("USER"),
 		SessionDuration: 3600,
+		InitMethod:      "vaulted",
 		DefaultVault:    "default",
 		Quiet:           false,
 	}
