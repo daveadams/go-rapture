@@ -3,31 +3,26 @@
 Rapture is a shell-integrated CLI tool for assuming AWS IAM roles easily and
 quickly.
 
-## NOTICE
-
-The golang version of Rapture is still in the initial development stages. Be
-careful! The docs below are incomplete and partially wrong!
-
 ## Usage Example
 
     $ rapture whoami
     arn:aws:iam::999988887777:user/janesmith
 
     $ rapture alias set admin arn:aws:iam::000011110000:role/admin-power
-    rapture: alias 'admin' was set to 'arn:aws:iam::000011110000:role/admin-power'
+    alias 'admin' was set to 'arn:aws:iam::000011110000:role/admin-power'
 
     $ rapture alias ls
-    admin      arn:aws:iam::000011110000:role/admin-power
-    marketing  arn:aws:iam::302830283028:role/marketing-access
+    arn:aws:iam::000011110000:role/admin-power admin
+    arn:aws:iam::302830283028:role/marketing-access marketing
 
     $ rapture assume admin
-    rapture: Assumed assumed-role admin-power in account 000011110000
+    Assumed role 'arn:aws:iam::000011110000:role/admin-power'
 
     $ rapture whoami
     arn:aws:sts::000011110000:assumed-role/admin-power/rapture-janesmith
 
     $ rapture resume
-    rapture: Resumed user janesmith in account 999988887777
+    Resumed base credentials
 
     $ rapture whoami
     arn:aws:iam::999988887777:user/janesmith
@@ -72,9 +67,9 @@ Finally, open a new terminal window to verify that Rapture is automatically load
 
 ## Upgrading from Bash Rapture
 
-Simply remove the old `source ~/.rapture/rapture.sh` from your shell startup
-script, and replace it with the new command. The old Rapture configuration files
-will continue to work in the same way.
+Simply remove the command `source ~/.rapture/rapture.sh` from your shell startup
+script, and replace it with the new command mentioned above. The old Rapture
+configuration files will continue to work in the same way.
 
 
 ## Configuration
@@ -95,11 +90,26 @@ the full ARN of the currently assumed role.
 Both of these environment variables are unset when base credentials are loaded.
 
 
-## Caveats
+## Vaulted integration
 
-Rapture assumes the use of `AWS_*` environment variables for determining the root identity.
+Rapture does _not_ manage your secrets for you. But Rapture is integrated with
+[Vaulted](https://github.com/miquella/vaulted) for providing secure storage of
+AWS access keys (and other secrets) in an easily manageable format and for
+loading them into your environment.
 
-Rapture does _not_ manage your secrets for you. I recommend [Vaulted](https://github.com/miquella/vaulted) for managing storing AWS access keys (and other secrets) securely in an easily manageable format and for loading them into your environment.
+If you have your AWS credentials configured in a vault named `default`, then
+you can simply run:
+
+    $ rapture init
+
+This will run `vaulted` on your behalf to load the credentials from the `default`
+Vault into your current environment. Or you can specify a different vault name:
+
+    $ rapture init awsvault
+
+If you set a value for `default_vault` in `~/.rapture/config.json`, Rapture
+will use that name instead of `default` as the default vault to decrypt.
+
 
 ## License
 
