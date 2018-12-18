@@ -47,8 +47,19 @@ func CommandInit(cmd string, args []string) int {
 	}
 
 	if !exists {
-		shgen.ErrEchof("ERROR: No such vault '%s'", vault)
-		return 1
+		if len(args) == 0 {
+			if len(names) > 0 {
+				fn := DisplayFilename(config.ConfigFilename())
+				shgen.ErrEchof("ERROR: No default vault is defined. Consider setting 'default_vault' in %s.", fn)
+				return 1
+			} else {
+				shgen.ErrEcho("ERROR: No Vaulted vaults are available. Please use Vaulted to store your base credentials.")
+				return 1
+			}
+		} else {
+			shgen.ErrEchof("ERROR: No such vault '%s'", vault)
+			return 1
+		}
 	}
 
 	// use fmt to print this immediately to stderr
@@ -67,6 +78,7 @@ func CommandInit(cmd string, args []string) int {
 	// remove any rapture assumed-role env vars
 	shgen.Unset(session.AssumedRoleArnEnvVar)
 	shgen.Unset(session.AssumedRoleAliasEnvVar)
+	shgen.Unset(session.AssumedRoleExpirationEnvVar)
 
 	for varname, value := range vars {
 		// set the variable in the shell
