@@ -10,7 +10,7 @@ func CommandResume(cmd string, args []string) int {
 
 	RequireWrap()
 
-	sess, _, err := session.CurrentSession()
+	sess, err := CurrentSession()
 	if err != nil {
 		shgen.ErrEchof("ERROR: Could not load current Rapture session: %s", err)
 		return 1
@@ -22,6 +22,7 @@ func CommandResume(cmd string, args []string) int {
 
 	shgen.Unset(session.AssumedRoleAliasEnvVar)
 	shgen.Unset(session.AssumedRoleArnEnvVar)
+	shgen.Unset(session.AssumedRoleExpirationEnvVar)
 
 	return 0
 }
