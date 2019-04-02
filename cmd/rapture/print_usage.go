@@ -17,6 +17,9 @@ Commands:
   whoami
     Prints the IAM ARN of the currently active identity.
 
+  account <subcommand ...>
+    Manage rapture accounts.
+
   assume <role>
     Attempts to assume the role given (either an ARN or an alias) from the
     current session's base credentials.
@@ -27,6 +30,9 @@ Commands:
 
   resume
     Reverts from an assumed role to the base credentials.
+
+  role <subcommand ...>
+    Manage rapture roles (aliases).
 
   check
     Checks the status of Rapture's shell integration.
