@@ -32,7 +32,14 @@ type CachedCredentials struct {
 // otherwise, try to assume the role
 // base credentials are stored with the sentinel role arn of BaseCredentialsArn
 func (s *RaptureSession) CredentialsForRole(arn string) (*CachedCredentials, error) {
-	log.Tracef("session: RaptureSession.CredentialsForRole(arn='%s')", arn)
+	return s.GetCredentialsForRole(arn, false)
+}
+
+// fetch cached credentials if they are valid and not yet expired, and force_refresh is not on
+// otherwise, try to assume the role
+// base credentials are stored with the sentinel role arn of BaseCredentialsArn
+func (s *RaptureSession) GetCredentialsForRole(arn string, forceRefresh bool) (*CachedCredentials, error) {
+	log.Tracef("session: RaptureSession.GetCredentialsForRole(arn='%s', forceRefresh='%t')", arn, forceRefresh)
 
 	rv := &CachedCredentials{
 		RoleArn: arn,
@@ -41,7 +48,7 @@ func (s *RaptureSession) CredentialsForRole(arn string) (*CachedCredentials, err
 
 	if ok, err := rv.load(); ok {
 		log.Debug("Loaded credentials from cache successfully")
-		if !rv.Creds.NearExpiration() {
+		if !rv.Creds.NearExpiration() && !forceRefresh {
 			log.Debug("These credentials are not expired!")
 			return rv, nil
 		}
