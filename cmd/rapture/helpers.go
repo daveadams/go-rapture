@@ -58,7 +58,11 @@ func CurrentSession() (*session.RaptureSession, error) {
 
 func LoadCredentials(id string) (*session.CachedCredentials, error) {
 	log.Tracef("main: LoadCredentials(id='%s')", id)
+	return LoadCredentialsWithForce(id, false)
+}
 
+func LoadCredentialsWithForce(id string, forceRefresh bool) (*session.CachedCredentials, error) {
+	log.Tracef("main: LoadCredentialsWithForce(id='%s', force_refresh='%t')", id, forceRefresh)
 	roles, err := config.LoadRoles()
 	if err != nil {
 		shgen.ErrEchof("WARNING: could not load role alias config: %s", err)
@@ -75,7 +79,7 @@ func LoadCredentials(id string) (*session.CachedCredentials, error) {
 		return nil, err
 	}
 
-	cc, err := sess.CredentialsForRole(arn)
+	cc, err := sess.GetCredentialsForRole(arn, forceRefresh)
 	if err != nil {
 		return nil, fmt.Errorf("Could not assume role '%s': %s", id, err)
 	}

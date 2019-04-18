@@ -16,6 +16,7 @@ var cmdMap CommandMap = CommandMap{
 	"config":     CommandConfig,
 	"daemon":     CommandDaemon,
 	"init":       CommandInit,
+	"refresh":    CommandRefresh,
 	"reset":      CommandReset,
 	"resume":     CommandResume,
 	"role":       CommandRole,
