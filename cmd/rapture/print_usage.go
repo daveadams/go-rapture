@@ -20,6 +20,9 @@ Commands:
   account <subcommand ...>
     Manage rapture accounts.
 
+  role <subcommand ...>
+    Manage rapture roles (aliases).
+
   assume <role>
     Attempts to assume the role given (either an ARN or an alias) from the
     current session's base credentials.
@@ -28,11 +31,11 @@ Commands:
     Assumes the role <role> and executes <command>. Then restores the existing
     credentials.
 
+  refresh
+    Refresh the current assumed-role credentials instead of using the cache.
+
   resume
     Reverts from an assumed role to the base credentials.
-
-  role <subcommand ...>
-    Manage rapture roles (aliases).
 
   check
     Checks the status of Rapture's shell integration.
