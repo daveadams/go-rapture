@@ -15,7 +15,11 @@ func CommandRefresh(cmd string, args []string) int {
 		shgen.ErrEchof("ERROR: Could not load current Rapture session: %s", err)
 		return 1
 	}
-	sess.BaseCreds.ExportToEnvironment(shgen)
+
+	if sess.AssumedRoleArn == "" {
+		shgen.ErrEcho("WARN: No currently assumed role. Nothing to refresh.")
+		return 1
+	}
 
 	if cc, err := LoadCredentialsWithForce(sess.AssumedRoleAlias, true); err != nil {
 		shgen.ErrEchof("ERROR: %s", err)
