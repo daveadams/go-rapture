@@ -250,7 +250,7 @@ func (s *RaptureSession) Save(g shellgen.Generator) error {
 	if s.AssumedRoleAlias == "" {
 		g.Unset(AssumedRoleAliasEnvVar)
 	} else {
-		g.Export(AssumedRoleArnEnvVar, s.AssumedRoleArn)
+		g.Export(AssumedRoleAliasEnvVar, s.AssumedRoleAlias)
 	}
 
 	if err := s.SaveBaseCredentials(); err != nil {
