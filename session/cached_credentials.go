@@ -46,28 +46,30 @@ func (s *RaptureSession) GetCredentialsForRole(arn string, forceRefresh bool) (*
 		sess:    s,
 	}
 
-	if ok, err := rv.load(); ok {
-		log.Debug("Loaded credentials from cache successfully")
-		if !rv.Creds.NearExpiration() && !forceRefresh {
-			log.Debug("These credentials are not expired!")
-			return rv, nil
-		}
+	if !forceRefresh {
+		if ok, err := rv.load(); ok {
+			log.Debug("Loaded credentials from cache successfully")
+			if !rv.Creds.NearExpiration() {
+				log.Debug("These credentials are not expired!")
+				return rv, nil
+			}
 
-		log.Debug("These credentials are expired or will soon, and need to be renewed!")
-		if arn == BaseCredentialsArn {
-			log.Debug("But they are base credentials, so we have to hand that back to the UI.")
-			return nil, ErrBaseCredsExpired
-		}
-	} else {
-		if err != nil {
-			log.Debugf("ERROR: Failed to load credentials because: %s", err)
+			log.Debug("These credentials are expired or will soon, and need to be renewed!")
+			if arn == BaseCredentialsArn {
+				log.Debug("But they are base credentials, so we have to hand that back to the UI.")
+				return nil, ErrBaseCredsExpired
+			}
 		} else {
-			log.Debug("No cached credentials exist")
-		}
+			if err != nil {
+				log.Debugf("ERROR: Failed to load credentials because: %s", err)
+			} else {
+				log.Debug("No cached credentials exist")
+			}
 
-		// if we are trying to load base credentials, give up now
-		if arn == BaseCredentialsArn {
-			return nil, err
+			// if we are trying to load base credentials, give up now
+			if arn == BaseCredentialsArn {
+				return nil, err
+			}
 		}
 	}
 
