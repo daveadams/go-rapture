@@ -62,7 +62,7 @@ func LoadCredentials(id string) (*session.CachedCredentials, error) {
 }
 
 func LoadCredentialsWithForce(id string, forceRefresh bool) (*session.CachedCredentials, error) {
-	log.Tracef("main: LoadCredentialsWithForce(id='%s', force_refresh='%t')", id, forceRefresh)
+	log.Tracef("main: LoadCredentialsWithForce(id='%s', forceRefresh='%t')", id, forceRefresh)
 	roles, err := config.LoadRoles()
 	if err != nil {
 		shgen.ErrEchof("WARNING: could not load role alias config: %s", err)
