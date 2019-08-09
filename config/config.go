@@ -9,8 +9,9 @@ import (
 	"github.com/daveadams/go-rapture/log"
 )
 
+const DefaultAwsRegion = "us-east-1"
+
 type RaptureConfig struct {
-	Region          string `json:"region,omitempty"`
 	Identifier      string `json:"identifier,omitempty"`
 	SessionDuration int64  `json:"session_duration,omitempty"`
 	InitMethod      string `json:"init_method,omitempty"`
@@ -28,7 +29,6 @@ func ConfigFilename() string {
 func DefaultConfig() *RaptureConfig {
 	log.Trace("config: DefaultConfig()")
 	return &RaptureConfig{
-		Region:          "us-east-1",
 		Identifier:      os.Getenv("USER"),
 		SessionDuration: 3600,
 		InitMethod:      "vaulted",
@@ -101,4 +101,14 @@ func RawConfig() (*RaptureConfig, bool, error) {
 	}
 
 	return config, true, nil
+}
+
+func (rc *RaptureConfig) Region() string {
+	if rv, ok := os.LookupEnv("AWS_DEFAULT_REGION"); ok {
+		return rv
+	} else if rv, ok := os.LookupEnv("AWS_REGION"); ok {
+		return rv
+	} else {
+		return DefaultAwsRegion
+	}
 }

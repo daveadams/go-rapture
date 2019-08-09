@@ -1,10 +1,13 @@
 package validation
 
-import "regexp"
+import (
+	"regexp"
+
+	"github.com/aws/aws-sdk-go/aws/arn"
+)
 
 var (
 	validAwsAccountId = regexp.MustCompile(`^[0-9]{12}$`)
-	validIamRoleArn   = regexp.MustCompile(`^arn:aws:iam::[0-9]{12}:role/.+$`)
 )
 
 func IsValidAwsAccountId(s string) bool {
@@ -12,5 +15,9 @@ func IsValidAwsAccountId(s string) bool {
 }
 
 func IsValidIamRoleArn(s string) bool {
-	return validIamRoleArn.MatchString(s)
+	if _, err := arn.Parse(s); err != nil {
+		return false
+	} else {
+		return true
+	}
 }

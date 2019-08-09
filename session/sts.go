@@ -3,14 +3,15 @@ package session
 import (
 	"errors"
 	"fmt"
-	//"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	awscreds "github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
 	awssession "github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/daveadams/go-rapture/config"
 	"github.com/daveadams/go-rapture/log"
+	vaulted "github.com/miquella/vaulted/lib"
 )
 
 var (
@@ -21,7 +22,10 @@ var (
 func (c *Credentials) stsClient() (*sts.STS, error) {
 	log.Trace("session: Credentials.stsClient()")
 
-	config := &aws.Config{Region: aws.String(config.GetConfig().Region)}
+	config := &aws.Config{
+		Region:           aws.String(config.GetConfig().Region()),
+		EndpointResolver: vaulted.STSEndpointResolver(endpoints.DefaultResolver()),
+	}
 	config.Credentials = awscreds.NewStaticCredentials(c.ID, c.Secret, c.Token)
 	if sess, err := awssession.NewSession(config); err != nil {
 		return nil, err

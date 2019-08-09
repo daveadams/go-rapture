@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/daveadams/go-rapture/config"
 	"github.com/daveadams/go-rapture/log"
 )
@@ -25,16 +27,21 @@ func CommandConfig(cmd string, args []string) int {
 		shgen.Echo("INFO: Defaults will be used instead")
 	}
 
-	creg := raw.Region
-	if creg == "" {
-		creg = "<unset>"
+	awsDefaultRegionEnvValue := "<unset>"
+	if v := os.Getenv("AWS_DEFAULT_REGION"); v != "" {
+		awsDefaultRegionEnvValue = v
+	}
+
+	awsRegionEnvValue := "<unset>"
+	if v := os.Getenv("AWS_REGION"); v != "" {
+		awsRegionEnvValue = v
 	}
 
 	shgen.Echo("AWS Region to use for API calls:")
-	shgen.Echo("      key: region")
-	shgen.Echof("  default: %s", defaults.Region)
-	shgen.Echof("     file: %s", creg)
-	shgen.Echof("    value: %s", conf.Region)
+	shgen.Echof("  AWS_DEFAULT_REGION: %s", awsDefaultRegionEnvValue)
+	shgen.Echof("          AWS_REGION: %s", awsRegionEnvValue)
+	shgen.Echof("             default: %s", config.DefaultAwsRegion)
+	shgen.Echof("               value: %s", conf.Region())
 	shgen.Echo("")
 
 	cid := raw.Identifier
