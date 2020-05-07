@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/daveadams/go-rapture/config"
 	"github.com/daveadams/go-rapture/log"
 	"github.com/daveadams/go-rapture/session"
@@ -69,9 +70,13 @@ func LoadCredentialsWithForce(id string, forceRefresh bool) (*session.CachedCred
 	}
 
 	roleName := id
-	arn := roleName
-	if val, ok := roles[arn]; ok {
-		arn = val
+	arnStr := roleName
+	if val, ok := roles[arnStr]; ok {
+		arnStr = val
+	} else {
+		if !arn.IsARN(arnStr) {
+			return nil, fmt.Errorf("'%s' is not a known alias or valid arn", roleName)
+		}
 	}
 
 	sess, err := CurrentSession()
@@ -79,7 +84,7 @@ func LoadCredentialsWithForce(id string, forceRefresh bool) (*session.CachedCred
 		return nil, err
 	}
 
-	cc, err := sess.GetCredentialsForRole(arn, forceRefresh)
+	cc, err := sess.GetCredentialsForRole(arnStr, forceRefresh)
 	if err != nil {
 		return nil, fmt.Errorf("Could not assume role '%s': %s", id, err)
 	}
