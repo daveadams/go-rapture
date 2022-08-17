@@ -39,7 +39,7 @@ quickly.
 First, install the latest Rapture binary for your platform [from Github](https://github.com/daveadams/go-rapture/releases)
 and copy it to a directory in your PATH. Or if you prefer you can build it yourself (Go 1.12 or higher required):
 
-    $ go get -u github.com/daveadams/go-rapture/cmd/rapture
+    $ go install github.com/daveadams/go-rapture/cmd/rapture
 
 To configure your shell to load Rapture at startup, follow the instructions
 below for your specific shell.
